@@ -1,4 +1,5 @@
 "use client";
+
 import { signOut } from "@/actions/auth/auth";
 import React, { useState } from "react";
 
@@ -9,16 +10,22 @@ const Logout = () => {
     event.preventDefault();
     setLoading(true);
 
-    await signOut();
+    await signOut(); // Call the sign out action
 
     setLoading(false);
   };
 
   return (
-    <div className="bg-gray-600 text-white text-sm px-4 py-2 rounded-md cursor-pointer">
+    <div className="bg-red-800 text-white text-sm px-4 py-2 rounded-md cursor-pointer">
       <form onSubmit={handleLogout}>
-        <button type="submit" disabled={loading}>
-          {loading ? "Signing out..." : "Sign out"}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full h-full text-center" // Ensure the button takes the full width and height
+        >
+          <div className="flex justify-center items-center w-full h-full">
+            {loading ? "Signing out..." : "Sign out"}
+          </div>
         </button>
       </form>
     </div>

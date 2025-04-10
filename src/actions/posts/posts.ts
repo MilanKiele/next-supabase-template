@@ -2,31 +2,6 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function getOwnProfileId() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return null;
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("user_profiles")
-    .select("id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (profileError || !profile) {
-    return null;
-  }
-
-  return profile.id;
-}
-
 export async function createPost(formData: FormData) {
   const supabase = await createClient();
 

@@ -1,5 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  guestOnlyPages,
+  privatePages,
+  redirectBlockedProfile,
+  redirectIfAuthenticated,
+  redirectIfNotAuthenticated,
+} from "./routes";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -41,18 +48,44 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.includes("/login") &&
-    !request.nextUrl.pathname.includes("/register") &&
-    !request.nextUrl.pathname.includes("/forgot-password") &&
-    !request.nextUrl.pathname.includes("/reset-password") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // Routes Handling
+  const path = request.nextUrl.pathname;
+
+  const isPrivate =
+    privatePages.some((page) => path.includes(page)) ||
+    privatePages.includes(path);
+  const isGuestOnly = guestOnlyPages.some((page) => path.includes(page));
+  const isOnBlockedPage = path === redirectBlockedProfile;
+
+  // Private Pages
+  if (!user && isPrivate) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = redirectIfNotAuthenticated;
     return NextResponse.redirect(url);
+  }
+
+  // Not Authenticated Pages but Open
+  if (user && isGuestOnly) {
+    const url = request.nextUrl.clone();
+    url.pathname = redirectIfAuthenticated;
+    return NextResponse.redirect(url);
+  }
+
+  // If user is logged in, check if they are blocked
+  if (user && !isOnBlockedPage) {
+    const { data: profile, error } = await supabase
+      .from("user_profiles")
+      .select("is_blocked")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const isBlocked = !!profile?.is_blocked;
+
+    if (error || isBlocked) {
+      const url = request.nextUrl.clone();
+      url.pathname = redirectBlockedProfile;
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

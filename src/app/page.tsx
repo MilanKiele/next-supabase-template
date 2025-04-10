@@ -1,9 +1,9 @@
-import ClientComponent from "@/components/auth/ClientComponent";
+import LandingSection from "@/components/base/LandingSection";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <ClientComponent />
+    <main>
+      <LandingSection />
     </main>
   );
 }

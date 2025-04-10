@@ -213,3 +213,31 @@ export async function resetPassword(formData: FormData, code: string) {
 
   return { status: "success" };
 }
+
+export async function changePassword(formData: FormData) {
+  const supabase = await createClient();
+
+  const password = formData.get("password") as string;
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return { status: error.message };
+  }
+
+  return { status: "success" };
+}
+
+export async function changeEmail(formData: FormData) {
+  const supabase = await createClient();
+
+  const email = formData.get("email") as string;
+
+  const { error } = await supabase.auth.updateUser({ email });
+
+  if (error) {
+    return { status: error.message };
+  }
+
+  return { status: "success" };
+}
