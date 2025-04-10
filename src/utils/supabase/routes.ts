@@ -1,12 +1,5 @@
 // Always Public Pages
-export const publicPages = [
-  "/",
-  "error",
-  "not-found",
-  "/legal",
-  "/posts",
-  "/users",
-];
+export const publicPages = ["/", "/error", "loading", "not-found", "/legal"];
 export const publicAuthPagess = ["/auth", "/callback", "/confirm"];
 export const auth = "/auth";
 
@@ -19,7 +12,7 @@ export const guestOnlyPages = [
 ];
 
 // Only authenticated
-export const privatePages = ["/settings"];
+export const privatePages = ["/settings", "/users", "/posts"];
 
 // Redirects
 export const redirectIfNotAuthenticated = "/login";

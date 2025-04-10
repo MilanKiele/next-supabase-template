@@ -1,8 +1,3 @@
-/*
-File: GithubButton.tsx
-Description: GithubButton component.
-*/
-
 "use client";
 
 import { FaGithub } from "react-icons/fa";

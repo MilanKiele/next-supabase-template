@@ -5,41 +5,37 @@ import React, { useState, useEffect } from "react";
 import ProfileData from "./ProfileData";
 import { FaEdit } from "react-icons/fa";
 
-export default function ProfileSettings() {
-  const [userProfile, setUserProfile] = useState<any>(null); // User profile data
-  const [isEditing, setIsEditing] = useState<boolean>(false); // Editing state for username
-  const [username, setUsername] = useState<string>("");
-  const [profileSuccess, setProfileSuccess] = useState<string>("");
-  const [profileError, setProfileError] = useState<string>("");
+type UserProfile = {
+  id?: string;
+  username: string | null;
+  is_blocked?: boolean;
+};
 
-  // Fetch the user's profile when the component mounts
+export default function ProfileSettings() {
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [username, setUsername] = useState("");
+  const [profileSuccess, setProfileSuccess] = useState("");
+  const [profileError, setProfileError] = useState("");
+
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Fetch profile data from Supabase or another API
-      const profileData = await getOwnProfile(); // Retrieve profile data
+      const profileData = await getOwnProfile();
       if (profileData) {
-        setUserProfile(profileData); // Store profile data
+        setUserProfile(profileData);
         setUsername(profileData.username || "");
       }
     };
     fetchUserProfile();
   }, []);
 
-  // Function to update the profile data
   const handleProfileUpdate = async () => {
-    try {
-      const result = await updateUsername(username); // Update only the username
-      if (result.status === "success") {
-        // Username updated successfully
-        setProfileSuccess(result.message);
-        setProfileError("");
-      } else {
-        // Error occurred (e.g. the username was not unique)
-        setProfileError(result.message);
-        setProfileSuccess("");
-      }
-    } catch (error) {
-      setProfileError("Error updating profile.");
+    const result = await updateUsername(username);
+    if (result.status === "success") {
+      setProfileSuccess(result.message);
+      setProfileError("");
+    } else {
+      setProfileError(result.message);
       setProfileSuccess("");
     }
   };
@@ -56,10 +52,8 @@ export default function ProfileSettings() {
     <div className="max-w-md mx-auto mt-6 p-6 rounded-2xl shadow-md bg-white border border-gray-200">
       <h3 className="text-md font-semibold mb-4">Profile Settings</h3>
 
-      {/* ProfileData component for displaying the username */}
       <ProfileData username={username} />
 
-      {/* Editable Username Field */}
       <h3 className="text-md font-semibold mb-4 mt-8">Change Username</h3>
       <div className="mb-4 flex items-center">
         {isEditing ? (
@@ -81,7 +75,6 @@ export default function ProfileSettings() {
         </button>
       </div>
 
-      {/* Save Changes Button */}
       {isEditing && (
         <button
           onClick={handleProfileUpdate}
@@ -91,7 +84,6 @@ export default function ProfileSettings() {
         </button>
       )}
 
-      {/* Success or Error Message */}
       {profileSuccess && (
         <p className="text-green-600 text-sm mt-1">{profileSuccess}</p>
       )}

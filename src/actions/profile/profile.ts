@@ -1,5 +1,6 @@
 "use server";
 
+import { profileSchema } from "@/schemas/profile/profile-schemas";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getOwnProfileRole() {
@@ -95,6 +96,14 @@ export async function getUserRole() {
 }
 
 export async function updateUsername(newUsername: string) {
+  // Zod-Validation
+  const result = profileSchema.safeParse({ username: newUsername });
+
+  if (!result.success) {
+    const errorMessage = result.error.errors[0]?.message || "Invalid username";
+    return { status: "error", message: errorMessage };
+  }
+
   const supabase = await createClient();
 
   const { data: existingUser, error: checkError } = await supabase
@@ -110,6 +119,7 @@ export async function updateUsername(newUsername: string) {
   if (existingUser) {
     return { status: "error", message: "Username already taken" };
   }
+
   const {
     data: { user },
     error: userError,

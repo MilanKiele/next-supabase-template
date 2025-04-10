@@ -16,9 +16,7 @@ type Post = {
   content: string;
   profile_id: string;
   created_at: string;
-  user_profiles?: {
-    username: string;
-  };
+  username: string; // Hier fügen wir den Username hinzu
 };
 
 export default function PostsSection() {
@@ -32,6 +30,7 @@ export default function PostsSection() {
   const [isPending, startTransition] = useTransition();
   const [userRole, setUserRole] = useState<string | null>(null);
 
+  // Lade Posts und andere Daten
   useEffect(() => {
     async function loadData() {
       const [postsRes, profileId, role] = await Promise.all([
@@ -41,20 +40,8 @@ export default function PostsSection() {
       ]);
 
       if (postsRes.status === "success") {
-        const rawPosts = postsRes.posts ?? [];
-
-        const normalizedPosts: Post[] = rawPosts.map((post) => ({
-          ...post,
-          // Ensure username is available or fallback to "null"
-          user_profiles: {
-            username:
-              post.user_profiles && post.user_profiles // @ts-ignore
-                ? post.user_profiles.username
-                : "null", // Fallback to "null" if no username
-          },
-        }));
-
-        setPosts(normalizedPosts);
+        // Falls postsRes.posts undefined ist, wird ein leeres Array gesetzt
+        setPosts(postsRes.posts ?? []);
       } else {
         setStatus(postsRes.message ?? null);
       }
@@ -165,13 +152,10 @@ export default function PostsSection() {
                   <h3 className="font-semibold text-lg">{post.title}</h3>
                   <p className="text-sm text-gray-600 mb-2">
                     {new Date(post.created_at).toLocaleString()}
-                    {post.user_profiles?.username && (
+                    {post.username && (
                       <>
                         {" "}
-                        ·{" "}
-                        <span className="text-blue-600">
-                          {post.user_profiles.username}
-                        </span>
+                        · <span className="text-blue-600">{post.username}</span>
                       </>
                     )}
                   </p>

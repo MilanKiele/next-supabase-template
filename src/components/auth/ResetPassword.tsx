@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import AuthButton from "@/components/auth/AuthButton";
 import { useRouter, useSearchParams } from "next/navigation";

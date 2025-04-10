@@ -1,8 +1,3 @@
-/*
-File: Formfield.tsx
-Description: describes a form field.
-*/
-
 import React from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 

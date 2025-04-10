@@ -1,8 +1,3 @@
-/*
-File: DropdownContainer.tsx
-Description: A small dropdown menu.
-*/
-
 import React from "react";
 import Link from "next/link";
 

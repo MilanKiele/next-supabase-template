@@ -13,6 +13,7 @@ type UserProfile = {
   email: string;
   role: string;
   is_blocked: boolean;
+  username: string;
 };
 
 export default function UsersPage() {
@@ -44,9 +45,13 @@ export default function UsersPage() {
     load();
   }, []);
 
-  const filteredUsers = users.filter((u) =>
-    `${u.email}`.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users.filter((u) => {
+    const lowerSearch = search.toLowerCase();
+    return (
+      u.email.toLowerCase().includes(lowerSearch) ||
+      u.username?.toLowerCase().includes(lowerSearch)
+    );
+  });
 
   const handleToggleRole = (user: UserProfile) => {
     startTransition(async () => {
@@ -93,12 +98,11 @@ export default function UsersPage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by email..."
+          placeholder="Search by email or username..."
           className="w-full border px-4 py-2 rounded mb-6"
         />
 
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-2">All Users</h2>
           {filteredUsers.map((user) => (
             <div
               key={user.user_id}
@@ -106,6 +110,10 @@ export default function UsersPage() {
             >
               <div>
                 <p className="font-semibold">{user.email}</p>
+                {user.username && (
+                  <p className="text-sm text-gray-500">@{user.username}</p>
+                )}
+
                 <div className="text-sm text-gray-600 flex items-center gap-2 mt-1">
                   <span className="capitalize">Role: {user.role}</span>
                   {user.role === "admin" && (
@@ -125,58 +133,25 @@ export default function UsersPage() {
                   )}
                 </div>
               </div>
-              <button
-                onClick={() => handleToggleBlock(user)}
-                className="text-sm px-3 py-1 border rounded hover:bg-gray-100"
-                disabled={isPending}
-              >
-                {user.is_blocked ? "Unblock" : "Block"}
-              </button>
+
+              <div className="flex flex-col gap-2 items-end">
+                <button
+                  onClick={() => handleToggleBlock(user)}
+                  className="text-sm px-3 py-1 border rounded hover:bg-gray-100"
+                  disabled={isPending}
+                >
+                  {user.is_blocked ? "Unblock" : "Block"}
+                </button>
+                <button
+                  onClick={() => handleToggleRole(user)}
+                  className="text-sm px-3 py-1 border rounded hover:bg-gray-100"
+                  disabled={isPending}
+                >
+                  {user.role === "admin" ? "Demote" : "Promote to Admin"}
+                </button>
+              </div>
             </div>
           ))}
-        </div>
-
-        <hr className="my-8" />
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-2">Blocked Users</h2>
-          {users.filter((u) => u.is_blocked).length === 0 && (
-            <p className="text-sm text-gray-500">No blocked users.</p>
-          )}
-          {users
-            .filter((u) => u.is_blocked)
-            .map((user) => (
-              <div
-                key={user.user_id}
-                className="border px-4 py-3 rounded flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-semibold">{user.email}</p>
-                  <div className="text-sm text-gray-600 flex items-center gap-2 mt-1">
-                    <span className="capitalize">Role: {user.role}</span>
-                    <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">
-                      Blocked
-                    </span>
-                  </div>
-                </div>
-                <div className="flex">
-                  <button
-                    onClick={() => handleToggleBlock(user)}
-                    className="text-sm px-3 py-1 border rounded hover:bg-gray-100"
-                    disabled={isPending}
-                  >
-                    Unblock
-                  </button>
-                  <button
-                    onClick={() => handleToggleRole(user)}
-                    className="text-sm px-3 py-1 border rounded hover:bg-gray-100 ml-2"
-                    disabled={isPending}
-                  >
-                    {user.role === "admin" ? "Demote" : "Promote to Admin"}
-                  </button>
-                </div>
-              </div>
-            ))}
         </div>
       </div>
     </main>

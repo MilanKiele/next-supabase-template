@@ -1,8 +1,3 @@
-/*
-File: Footer.tsx
-Description: Handles the footer.
-*/
-
 import { BottomLinks, FooterContent, WebName } from "@/constants";
 import SocialMediaContainer from "./SocialMediaContainer";
 import AdminButton from "../admin/AdminButton";

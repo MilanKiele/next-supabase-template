@@ -1,8 +1,3 @@
-/*
-File: YoutubeButton.tsx
-Description: YoutubeButton component.
-*/
-
 "use client";
 
 import { YoutubeLink } from "@/constants";

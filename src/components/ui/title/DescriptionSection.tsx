@@ -1,8 +1,3 @@
-/*
-File: Description Header  Title
-Description: This creates a context provider for authentication.
-*/
-
 import React from "react";
 
 interface DescriptionSectionProps {

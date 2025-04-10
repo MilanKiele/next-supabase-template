@@ -1,8 +1,3 @@
-/*
-File: ItemButton.tsx
-Description: This creates an icon button
-*/
-
 import React from "react";
 import Image from "next/image";
 

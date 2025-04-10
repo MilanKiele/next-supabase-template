@@ -1,8 +1,3 @@
-/*
-File: FormMessage.tsx
-Description: Shows final form result.
-*/
-
 import React from "react";
 
 interface FormMessageProps {

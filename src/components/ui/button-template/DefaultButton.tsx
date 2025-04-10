@@ -1,8 +1,3 @@
-/*
-File: Button.tsx
-Description: Reusable styled button components.
-*/
-
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;

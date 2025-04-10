@@ -1,8 +1,3 @@
-/*
-File: LandingSection.tsx
-Description: Landing Page Section for the application.
-*/
-
 export default function LandingSection() {
   return (
     <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12">

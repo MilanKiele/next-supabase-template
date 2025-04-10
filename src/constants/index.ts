@@ -2,7 +2,13 @@
 export const WebName = "MaiaLabs";
 export const Description = "Authentication App Template for Next.js";
 export const Creator = "Milan";
-export const Keywords = ["Template", "Next.js", "Authentication", "Milan"];
+export const Keywords = [
+  "Template",
+  "Next.js",
+  "Authentication",
+  "Supabase",
+  "MaiaLabs",
+];
 export const CopyRight = `@${new Date().getFullYear()} ${WebName}. All Rights Reserved`;
 export const LogoSVG = "/logo.svg";
 export const Supportmail = "support@maialabs.net";

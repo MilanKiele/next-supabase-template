@@ -59,7 +59,7 @@ export async function getAllUsers() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("user_profiles")
-    .select("user_id, email, role, is_blocked");
+    .select("user_id, email, role, is_blocked, username");
 
   if (error) {
     console.error("getAllUsers error:", error.message);

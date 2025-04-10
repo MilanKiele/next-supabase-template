@@ -1,5 +1,6 @@
 "use server";
 
+import { PostSchema } from "@/schemas/posts/post-schemas";
 import { createClient } from "@/utils/supabase/server";
 
 export async function createPost(formData: FormData) {
@@ -12,7 +13,7 @@ export async function createPost(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { status: "error", message: "Nicht eingeloggt" };
+    return { status: "error", message: "Not logged in" };
   }
 
   // Get user profile
@@ -23,15 +24,21 @@ export async function createPost(formData: FormData) {
     .maybeSingle();
 
   if (profileError || !profile) {
-    return { status: "error", message: "Profil nicht gefunden" };
+    return { status: "error", message: "Profile not found" };
   }
 
   // Get form values
   const title = formData.get("title") as string;
   const content = formData.get("content") as string;
 
-  if (!title || !content) {
-    return { status: "error", message: "Titel und Inhalt sind erforderlich." };
+  // ✅ Validate the title and content using Zod schema
+  const validation = PostSchema.safeParse({ title, content });
+
+  if (!validation.success) {
+    return {
+      status: "error",
+      message: validation.error.errors[0]?.message || "Invalid input",
+    };
   }
 
   // Insert into posts
@@ -48,35 +55,57 @@ export async function createPost(formData: FormData) {
   return { status: "success" };
 }
 
-// ALLE POSTS LADEN (öffentlich)
 export async function getAllPosts() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // 1. Alle Posts holen
+  const { data: postsData, error: postsError } = await supabase
     .from("posts")
-    .select(
-      `
-      id,
-      title,
-      content,
-      profile_id,
-      created_at,
-      user_profiles (
-        id,
-        username,
-        email
-      )
-    `
-    )
+    .select("id, title, content, profile_id, created_at")
     .order("created_at", { ascending: false });
 
-  if (error) {
-    return { status: "error", message: error.message };
+  if (postsError || !postsData) {
+    return {
+      status: "error",
+      message: postsError?.message ?? "Fehler beim Laden der Beiträge",
+    };
   }
+
+  // 2. Alle eindeutigen profile_ids sammeln
+  const profileIds = [...new Set(postsData.map((post) => post.profile_id))];
+
+  // 3. Alle zugehörigen Usernames abfragen
+  const { data: profilesData, error: profilesError } = await supabase
+    .from("user_profiles")
+    .select("id, username")
+    .in("id", profileIds);
+
+  if (profilesError || !profilesData) {
+    return {
+      status: "error",
+      message: profilesError?.message ?? "Fehler beim Laden der Profile",
+    };
+  }
+
+  // 4. Map: profile_id -> username
+  const profileMap: Record<string, string> = {};
+  for (const profile of profilesData) {
+    profileMap[profile.id] = profile.username ?? "Unbekannt";
+  }
+
+  // 5. Kombinieren der Daten
+  const normalizedPosts = postsData.map((post) => ({
+    id: post.id,
+    title: post.title,
+    content: post.content,
+    profile_id: post.profile_id,
+    created_at: post.created_at,
+    username: profileMap[post.profile_id] ?? "Unbekannt",
+  }));
 
   return {
     status: "success",
-    posts: data,
+    posts: normalizedPosts,
   };
 }
 

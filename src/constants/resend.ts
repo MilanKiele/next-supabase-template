@@ -3,7 +3,7 @@ export const FromEmail = "onboarding@resend.dev";
 
 // Email Content
 export const SenderName = "MaiaLabs";
-export const SenderAddress = "Hoffmannstraße 5b, 53535 Kürten, Germany";
+export const SenderAddress = "Street 1, 12345 Munich Germany";
 export const SenderEmail = "support@maialabs.net";
 export const PrivacyPolicyLink = "https://maialabs.net/legal";
 export const UnsubscribeLink = "";

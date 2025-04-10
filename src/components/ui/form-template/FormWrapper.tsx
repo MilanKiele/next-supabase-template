@@ -1,8 +1,3 @@
-/*
-File: FormWrapper.tsx
-Description: Wraps a form.
-*/
-
 import React, { ReactNode } from "react";
 
 const FormWrapper = ({ children }: { children: ReactNode }) => {

@@ -1,8 +1,3 @@
-/*
-File: LinkButton.tsx
-Description: Reusable styled button components.
-*/
-
 import Link from "next/link";
 
 interface LinkButtonProps {
